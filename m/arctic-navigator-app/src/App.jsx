@@ -1,35 +1,123 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect, useRef } from 'react';
+import Map from './components/Map';
+import Sidebar from './components/Sidebar';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [ships, setShips] = useState([]);
+  const [iceData, setIceData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [iceLayer, setIceLayer] = useState(true);
+  const [shipsLayer, setShipsLayer] = useState(true);
+  const mapInstanceRef = useRef(null);
+
+  // Загрузка данных при монтировании
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      
+      const [shipsRes, iceRes] = await Promise.all([
+        fetch('/api/ships'),
+        fetch('/api/ice')
+      ]);
+      
+      if (!shipsRes.ok || !iceRes.ok) {
+        throw new Error('Ошибка загрузки данных с сервера');
+      }
+      
+      const shipsData = await shipsRes.json();
+      const iceDataRes = await iceRes.json();
+      
+      setShips(shipsData.ships || []);
+      setIceData(iceDataRes);
+      setLoading(false);
+    } catch (err) {
+      console.error('Ошибка загрузки:', err);
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
+  const handleShipClick = (ship) => {
+    const map = mapInstanceRef.current;
+    if (map) {
+      map.setView([ship.lat, ship.lon], 8);
+      
+      // Найти и открыть popup маркера
+      map.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+          const latlng = layer.getLatLng();
+          if (Math.abs(latlng.lat - ship.lat) < 0.01 && Math.abs(latlng.lng - ship.lon) < 0.01) {
+            layer.openPopup();
+          }
+        }
+      });
+    }
+  };
+
+  const handleMapReady = (map) => {
+    mapInstanceRef.current = map;
+  };
+
+  if (loading) {
+    return (
+      <div className="loading">
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '20px' }}>⏳ Загрузка данных...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="loading">
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ fontSize: '20px', color: '#ef4444' }}>❌ {error}</p>
+          <button 
+            onClick={loadData}
+            className="btn-primary"
+            style={{
+              marginTop: '20px',
+              width: 'auto',
+              padding: '10px 20px'
+            }}
+          >
+            🔄 Попробовать снова
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="main-container">
+      <Sidebar 
+        ships={ships}
+        iceLayer={iceLayer}
+        shipsLayer={shipsLayer}
+        onIceLayerChange={setIceLayer}
+        onShipsLayerChange={setShipsLayer}
+        onRefresh={loadData}
+        onShipClick={handleShipClick}
+      />
+      
+      <div className="map-container">
+        <Map 
+          iceData={iceData}
+          ships={ships}
+          iceLayer={iceLayer}
+          shipsLayer={shipsLayer}
+          onMapReady={handleMapReady}
+        />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
