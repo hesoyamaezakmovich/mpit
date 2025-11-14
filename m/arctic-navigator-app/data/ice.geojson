@@ -1,0 +1,111 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "generated": "2025-11-14T12:00:00Z",
+    "satellite": "Arctic-Scout-02",
+    "source": "SAR",
+    "resolution": "10m"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_01",
+        "concentration": 80,
+        "thickness": "medium",
+        "thickness_cm": 120,
+        "type": "Плотный лед",
+        "age": "first_year",
+        "danger_level": "medium",
+        "drift_speed": 0.3,
+        "drift_direction": 45,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [70.0, 75.0],
+          [75.0, 75.0],
+          [75.0, 77.0],
+          [70.0, 77.0],
+          [70.0, 75.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_02",
+        "concentration": 95,
+        "thickness": "heavy",
+        "thickness_cm": 250,
+        "type": "Многолетний лед",
+        "age": "multi_year",
+        "danger_level": "high",
+        "drift_speed": 0.1,
+        "drift_direction": 90,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [80.0, 76.0],
+          [85.0, 76.0],
+          [85.0, 78.0],
+          [80.0, 78.0],
+          [80.0, 76.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_03",
+        "concentration": 40,
+        "thickness": "light",
+        "thickness_cm": 50,
+        "type": "Разреженный лед",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.5,
+        "drift_direction": 120,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [90.0, 74.0],
+          [95.0, 74.0],
+          [95.0, 76.0],
+          [90.0, 76.0],
+          [90.0, 74.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_04",
+        "concentration": 60,
+        "thickness": "medium",
+        "thickness_cm": 80,
+        "type": "Сплоченный лед с каналами",
+        "age": "first_year",
+        "danger_level": "medium",
+        "drift_speed": 0.4,
+        "drift_direction": 180,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [100.0, 75.0],
+          [105.0, 75.0],
+          [105.0, 77.0],
+          [100.0, 77.0],
+          [100.0, 75.0]
+        ]]
+      }
+    }
+  ]
+}

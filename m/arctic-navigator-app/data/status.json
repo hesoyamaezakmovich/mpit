@@ -1,0 +1,100 @@
+{
+  "timestamp": "2025-11-14T12:00:00Z",
+  "satellites": {
+    "total": 6,
+    "active": 4,
+    "maintenance": 1,
+    "offline": 1,
+    "constellation": [
+      {
+        "id": "AS-01",
+        "name": "Arctic-Scout-01",
+        "status": "active",
+        "orbit": "SSO",
+        "altitude_km": 600,
+        "next_pass_over_region": "2025-11-14T12:45:00Z",
+        "last_data_received": "2025-11-14T10:30:00Z"
+      },
+      {
+        "id": "AS-02",
+        "name": "Arctic-Scout-02",
+        "status": "active",
+        "orbit": "SSO",
+        "altitude_km": 600,
+        "next_pass_over_region": "2025-11-14T13:20:00Z",
+        "last_data_received": "2025-11-14T11:15:00Z"
+      },
+      {
+        "id": "AS-03",
+        "name": "Arctic-Scout-03",
+        "status": "active",
+        "orbit": "SSO",
+        "altitude_km": 600,
+        "next_pass_over_region": "2025-11-14T13:55:00Z",
+        "last_data_received": "2025-11-14T11:50:00Z"
+      },
+      {
+        "id": "AS-04",
+        "name": "Arctic-Scout-04",
+        "status": "active",
+        "orbit": "SSO",
+        "altitude_km": 600,
+        "next_pass_over_region": "2025-11-14T14:30:00Z",
+        "last_data_received": "2025-11-14T09:45:00Z"
+      },
+      {
+        "id": "AS-05",
+        "name": "Arctic-Scout-05",
+        "status": "maintenance",
+        "orbit": "SSO",
+        "altitude_km": 600,
+        "next_pass_over_region": null,
+        "last_data_received": "2025-11-13T16:00:00Z"
+      },
+      {
+        "id": "AS-06",
+        "name": "Arctic-Scout-06",
+        "status": "offline",
+        "orbit": "SSO",
+        "altitude_km": 600,
+        "next_pass_over_region": null,
+        "last_data_received": "2025-11-10T08:00:00Z"
+      }
+    ]
+  },
+  "ground_stations": {
+    "total": 3,
+    "active": 3,
+    "stations": [
+      {
+        "id": "GS-01",
+        "name": "Тикси",
+        "lat": 71.6,
+        "lon": 128.9,
+        "status": "operational",
+        "last_contact": "2025-11-14T11:55:00Z"
+      },
+      {
+        "id": "GS-02",
+        "name": "Певек",
+        "lat": 69.7,
+        "lon": 170.3,
+        "status": "operational",
+        "last_contact": "2025-11-14T11:48:00Z"
+      },
+      {
+        "id": "GS-03",
+        "name": "Диксон",
+        "lat": 73.5,
+        "lon": 80.5,
+        "status": "operational",
+        "last_contact": "2025-11-14T11:52:00Z"
+      }
+    ]
+  },
+  "data_coverage": {
+    "last_24h_updates": 18,
+    "average_latency_minutes": 35,
+    "coverage_percentage": 87
+  }
+}

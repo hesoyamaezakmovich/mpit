@@ -1,0 +1,38 @@
+{
+  "timestamp": "2025-11-14T12:00:00Z",
+  "routes": {
+    "safe": {
+      "name": "Безопасный маршрут",
+      "description": "Маршрут обходит зоны тяжелого льда",
+      "color": "#22c55e",
+      "coordinates": [
+        [70.0, 74.0],
+        [75.0, 74.5],
+        [80.0, 75.0],
+        [85.0, 75.2],
+        [90.0, 75.5],
+        [95.0, 76.0]
+      ],
+      "distance_km": 1850,
+      "estimated_time_hours": 92,
+      "ice_severity": "low",
+      "icebreaker_required": false
+    },
+    "optimal": {
+      "name": "Оптимальный маршрут",
+      "description": "Кратчайший маршрут через разреженные льды",
+      "color": "#3b82f6",
+      "coordinates": [
+        [70.0, 74.0],
+        [77.0, 75.0],
+        [84.0, 76.5],
+        [91.0, 77.2],
+        [95.0, 76.0]
+      ],
+      "distance_km": 1620,
+      "estimated_time_hours": 81,
+      "ice_severity": "medium",
+      "icebreaker_required": true
+    }
+  }
+}
