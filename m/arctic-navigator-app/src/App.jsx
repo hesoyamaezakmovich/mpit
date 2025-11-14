@@ -9,6 +9,7 @@ function App() {
   const [error, setError] = useState(null);
   const [iceLayer, setIceLayer] = useState(true);
   const [shipsLayer, setShipsLayer] = useState(true);
+  const [routesLayer, setRoutesLayer] = useState(true);
   const mapInstanceRef = useRef(null);
 
   // Загрузка данных при монтировании
@@ -67,9 +68,8 @@ function App() {
   if (loading) {
     return (
       <div className="loading">
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '20px' }}>⏳ Загрузка данных...</p>
-        </div>
+        <div className="loading-spinner"></div>
+        <div className="loading-text">Загрузка данных...</div>
       </div>
     );
   }
@@ -101,8 +101,10 @@ function App() {
         ships={ships}
         iceLayer={iceLayer}
         shipsLayer={shipsLayer}
+        routesLayer={routesLayer}
         onIceLayerChange={setIceLayer}
         onShipsLayerChange={setShipsLayer}
+        onRoutesLayerChange={setRoutesLayer}
         onRefresh={loadData}
         onShipClick={handleShipClick}
       />
@@ -113,6 +115,7 @@ function App() {
           ships={ships}
           iceLayer={iceLayer}
           shipsLayer={shipsLayer}
+          routesLayer={routesLayer}
           onMapReady={handleMapReady}
         />
       </div>

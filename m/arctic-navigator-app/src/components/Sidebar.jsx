@@ -1,88 +1,175 @@
+import { useState } from 'react';
+
 const Sidebar = ({ 
   ships, 
   iceLayer, 
-  shipsLayer, 
+  shipsLayer,
+  routesLayer,
   onIceLayerChange, 
-  onShipsLayerChange, 
+  onShipsLayerChange,
+  onRoutesLayerChange,
   onRefresh,
   onShipClick 
 }) => {
-  return (
-    <div className="sidebar">
-      <h1 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '20px' }}>
-        🌨️ Арктик Навигатор
-      </h1>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <h2 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>
-          Слои карты
-        </h2>
-        <label className="checkbox-label">
-          <input 
-            type="checkbox" 
-            checked={iceLayer}
-            onChange={(e) => onIceLayerChange(e.target.checked)}
-            style={{ marginRight: '8px' }}
-          />
-          Ледовая обстановка
-        </label>
-        <label className="checkbox-label">
-          <input 
-            type="checkbox" 
-            checked={shipsLayer}
-            onChange={(e) => onShipsLayerChange(e.target.checked)}
-            style={{ marginRight: '8px' }}
-          />
-          Суда (АИС)
-        </label>
-        <button 
-          onClick={onRefresh}
-          className="btn-primary"
-          style={{ marginTop: '10px' }}
-        >
-          🔄 Обновить данные
-        </button>
-      </div>
+  const [isOpen, setIsOpen] = useState(true);
 
-      <div>
-        <h2 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>
-          🚢 Суда в зоне ({ships.length})
-        </h2>
-        {ships.map(ship => (
-          <div 
-            key={ship.id}
-            className="ship-card"
-            onClick={() => onShipClick(ship)}
-          >
-            <div style={{ fontWeight: '500' }}>{ship.name}</div>
-            <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
-              {ship.lat.toFixed(2)}°N, {ship.lon.toFixed(2)}°E
+  const shipColors = {
+    icebreaker: '#3b82f6',
+    tanker: '#8b5cf6',
+    cargo: '#10b981',
+    research: '#f59e0b'
+  };
+
+  const shipLabels = {
+    icebreaker: 'Ледокол',
+    tanker: 'Танкер',
+    cargo: 'Грузовой',
+    research: 'Исследовательский'
+  };
+
+  return (
+    <>
+      {/* Кнопка гамбургер */}
+      <button 
+        className="hamburger-button"
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+      >
+        <div className={`hamburger-icon ${isOpen ? 'open' : ''}`}>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </button>
+
+      {/* Боковая панель */}
+      <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+        <div className="app-header">
+          <h1 className="app-title">
+            🌨️ Arctic Navigator
+          </h1>
+          <div className="app-subtitle">
+            Мониторинг ледовой обстановки в реальном времени
+          </div>
+        </div>
+        
+        <div className="sidebar-content">
+          {/* Контроль слоёв */}
+          <div className="panel">
+            <div className="panel-header">
+              🗺️ Слои карты
             </div>
-            <div style={{ fontSize: '12px', color: '#9ca3af', marginTop: '4px' }}>
-              ⚡ {ship.speed} уз | 🧭 {ship.course}°
+            <div className="layer-controls">
+              <div 
+                className={`layer-toggle ${iceLayer ? 'active' : ''}`}
+                onClick={() => onIceLayerChange(!iceLayer)}
+              >
+                <div className="layer-info">
+                  <span className="layer-icon">❄️</span>
+                  <span className="layer-label">Ледовая обстановка</span>
+                </div>
+                <div className={`toggle-switch ${iceLayer ? 'active' : ''}`}>
+                  <div className="toggle-slider"></div>
+                </div>
+              </div>
+
+              <div 
+                className={`layer-toggle ${shipsLayer ? 'active' : ''}`}
+                onClick={() => onShipsLayerChange(!shipsLayer)}
+              >
+                <div className="layer-info">
+                  <span className="layer-icon">🚢</span>
+                  <span className="layer-label">Суда (AIS)</span>
+                </div>
+                <div className={`toggle-switch ${shipsLayer ? 'active' : ''}`}>
+                  <div className="toggle-slider"></div>
+                </div>
+              </div>
+
+              <div 
+                className={`layer-toggle ${routesLayer ? 'active' : ''}`}
+                onClick={() => onRoutesLayerChange(!routesLayer)}
+              >
+                <div className="layer-info">
+                  <span className="layer-icon">🛤️</span>
+                  <span className="layer-label">Маршруты судов</span>
+                </div>
+                <div className={`toggle-switch ${routesLayer ? 'active' : ''}`}>
+                  <div className="toggle-slider"></div>
+                </div>
+              </div>
+            </div>
+            
+            <button 
+              onClick={onRefresh}
+              className="btn-primary"
+              style={{ marginTop: '12px' }}
+            >
+              <span>🔄</span>
+              <span>Обновить данные</span>
+            </button>
+          </div>
+
+          {/* Список судов */}
+          <div className="panel">
+            <div className="panel-header">
+              🚢 Суда в зоне ({ships.length})
+            </div>
+            <div className="ships-list">
+              {ships.map(ship => (
+                <div 
+                  key={ship.id}
+                  className={`ship-card ship-${ship.type}`}
+                  style={{ '--ship-color': shipColors[ship.type] }}
+                  onClick={() => onShipClick(ship)}
+                >
+                  <div className="ship-name">{ship.name}</div>
+                  <div className="ship-details">
+                    <div className="ship-detail">
+                      📍 {ship.lat.toFixed(2)}°N, {ship.lon.toFixed(2)}°E
+                    </div>
+                    <div className="ship-detail">
+                      ⚡ {ship.speed} уз | 🧭 {ship.course}°
+                    </div>
+                    <div className="ship-detail">
+                      🎯 {ship.destination}
+                    </div>
+                  </div>
+                  <span 
+                    className="ship-type-badge"
+                    style={{ 
+                      background: shipColors[ship.type],
+                      color: 'white'
+                    }}
+                  >
+                    {shipLabels[ship.type]}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
-        ))}
-      </div>
 
-      <div style={{ marginTop: '20px', paddingTop: '20px', borderTop: '1px solid #374151' }}>
-        <h3 style={{ fontSize: '14px', fontWeight: '600', marginBottom: '8px' }}>
-          📊 Легенда опасности льда
-        </h3>
-        <div className="legend-item">
-          <div className="legend-color" style={{ background: '#4ade80' }}></div>
-          Низкий (разреженный)
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ background: '#fbbf24' }}></div>
-          Средний (плотный)
-        </div>
-        <div className="legend-item">
-          <div className="legend-color" style={{ background: '#ef4444' }}></div>
-          Высокий (многолетний)
+          {/* Легенда */}
+          <div className="legend">
+            <div className="legend-title">📊 Уровень опасности</div>
+            <div className="legend-items">
+              <div className="legend-item">
+                <div className="legend-color" style={{ background: 'linear-gradient(90deg, #60a5fa, #3b82f6)' }}></div>
+                <span>Низкий (разреженный лёд)</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color" style={{ background: 'linear-gradient(90deg, #fbbf24, #f59e0b)' }}></div>
+                <span>Средний (плотный лёд)</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-color" style={{ background: 'linear-gradient(90deg, #ef4444, #dc2626)' }}></div>
+                <span>Высокий (многолетний лёд)</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

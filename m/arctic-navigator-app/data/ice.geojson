@@ -11,10 +11,10 @@
       "type": "Feature",
       "properties": {
         "id": "ice_zone_01",
-        "concentration": 80,
+        "concentration": 75,
         "thickness": "medium",
         "thickness_cm": 120,
-        "type": "Плотный лед",
+        "type": "Плотный лёд",
         "age": "first_year",
         "danger_level": "medium",
         "drift_speed": 0.3,
@@ -24,11 +24,11 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [70.0, 75.0],
-          [75.0, 75.0],
-          [75.0, 77.0],
-          [70.0, 77.0],
-          [70.0, 75.0]
+          [75.0, 79.0],
+          [80.0, 79.0],
+          [80.0, 81.0],
+          [75.0, 81.0],
+          [75.0, 79.0]
         ]]
       }
     },
@@ -38,8 +38,8 @@
         "id": "ice_zone_02",
         "concentration": 95,
         "thickness": "heavy",
-        "thickness_cm": 250,
-        "type": "Многолетний лед",
+        "thickness_cm": 280,
+        "type": "Многолетний лёд",
         "age": "multi_year",
         "danger_level": "high",
         "drift_speed": 0.1,
@@ -49,11 +49,11 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [80.0, 76.0],
-          [85.0, 76.0],
-          [85.0, 78.0],
-          [80.0, 78.0],
-          [80.0, 76.0]
+          [82.0, 80.5],
+          [88.0, 80.5],
+          [88.0, 82.5],
+          [82.0, 82.5],
+          [82.0, 80.5]
         ]]
       }
     },
@@ -61,10 +61,10 @@
       "type": "Feature",
       "properties": {
         "id": "ice_zone_03",
-        "concentration": 40,
+        "concentration": 45,
         "thickness": "light",
-        "thickness_cm": 50,
-        "type": "Разреженный лед",
+        "thickness_cm": 60,
+        "type": "Разреженный лёд",
         "age": "new_ice",
         "danger_level": "low",
         "drift_speed": 0.5,
@@ -74,11 +74,11 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [90.0, 74.0],
-          [95.0, 74.0],
-          [95.0, 76.0],
-          [90.0, 76.0],
-          [90.0, 74.0]
+          [70.0, 78.0],
+          [74.0, 78.0],
+          [74.0, 79.5],
+          [70.0, 79.5],
+          [70.0, 78.0]
         ]]
       }
     },
@@ -86,10 +86,35 @@
       "type": "Feature",
       "properties": {
         "id": "ice_zone_04",
-        "concentration": 60,
+        "concentration": 85,
+        "thickness": "heavy",
+        "thickness_cm": 220,
+        "type": "Сплочённый многолетний",
+        "age": "multi_year",
+        "danger_level": "high",
+        "drift_speed": 0.2,
+        "drift_direction": 30,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [90.0, 81.0],
+          [96.0, 81.0],
+          [96.0, 83.0],
+          [90.0, 83.0],
+          [90.0, 81.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_05",
+        "concentration": 65,
         "thickness": "medium",
-        "thickness_cm": 80,
-        "type": "Сплоченный лед с каналами",
+        "thickness_cm": 140,
+        "type": "Дрейфующий лёд",
         "age": "first_year",
         "danger_level": "medium",
         "drift_speed": 0.4,
@@ -99,11 +124,36 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [100.0, 75.0],
-          [105.0, 75.0],
-          [105.0, 77.0],
-          [100.0, 77.0],
-          [100.0, 75.0]
+          [68.0, 76.5],
+          [72.0, 76.5],
+          [72.0, 78.0],
+          [68.0, 78.0],
+          [68.0, 76.5]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_06",
+        "concentration": 55,
+        "thickness": "light",
+        "thickness_cm": 80,
+        "type": "Молодой лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.6,
+        "drift_direction": 270,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [98.0, 79.5],
+          [102.0, 79.5],
+          [102.0, 81.0],
+          [98.0, 81.0],
+          [98.0, 79.5]
         ]]
       }
     }
