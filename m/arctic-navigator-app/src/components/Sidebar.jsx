@@ -37,15 +37,13 @@ const Sidebar = ({
 
   const loadAnalyticsData = async () => {
     try {
-      const [iceRes, statusRes, routesRes] = await Promise.all([
+      const [iceRes, statusRes] = await Promise.all([
         fetch('/api/ice'),
-        fetch('/api/status'),
-        fetch('/api/routes')
+        fetch('/api/status')
       ]);
       
       const ice = await iceRes.json();
       const status = await statusRes.json();
-      const routes = await routesRes.json();
       
       // Подсчет статистики по судам
       const shipsByType = ships.reduce((acc, ship) => {
@@ -77,10 +75,6 @@ const Sidebar = ({
         ? (iceZones.reduce((sum, z) => sum + z.properties.thickness_cm, 0) / iceZones.length).toFixed(0)
         : 0;
 
-      // Статистика по маршрутам
-      const safeRoute = routes.routes?.safe;
-      const optimalRoute = routes.routes?.optimal;
-
       setAnalyticsData({
         shipsByType,
         avgSpeed,
@@ -90,11 +84,7 @@ const Sidebar = ({
         avgThickness,
         totalIceZones: iceZones.length,
         satellites: status.satellites,
-        coverage: status.data_coverage,
-        routes: {
-          safe: safeRoute,
-          optimal: optimalRoute
-        }
+        coverage: status.data_coverage
       });
     } catch (err) {
       console.error('Ошибка загрузки аналитики:', err);
@@ -286,63 +276,6 @@ const Sidebar = ({
                 </div>
               </div>
 
-              {/* Статистика по маршрутам */}
-              {analyticsData.routes.safe && (
-                <div className="analytics-section">
-                  <div className="analytics-section-title">🛤️ Маршруты</div>
-                  <div className="route-comparison">
-                    <div className="route-card">
-                      <div className="route-card-header" style={{ background: '#22c55e' }}>
-                        Безопасный
-                      </div>
-                      <div className="route-card-body">
-                        <div className="route-stat">
-                          <span className="route-label">Расстояние</span>
-                          <span className="route-value">{analyticsData.routes.safe.distance_km} км</span>
-                        </div>
-                        <div className="route-stat">
-                          <span className="route-label">Время</span>
-                          <span className="route-value">{analyticsData.routes.safe.estimated_time_hours} ч</span>
-                        </div>
-                        <div className="route-stat">
-                          <span className="route-label">Ледокол</span>
-                          <span className="route-value">{analyticsData.routes.safe.icebreaker_required ? 'Да' : 'Нет'}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="route-card">
-                      <div className="route-card-header" style={{ background: '#3b82f6' }}>
-                        Оптимальный
-                      </div>
-                      <div className="route-card-body">
-                        <div className="route-stat">
-                          <span className="route-label">Расстояние</span>
-                          <span className="route-value">{analyticsData.routes.optimal.distance_km} км</span>
-                        </div>
-                        <div className="route-stat">
-                          <span className="route-label">Время</span>
-                          <span className="route-value">{analyticsData.routes.optimal.estimated_time_hours} ч</span>
-                        </div>
-                        <div className="route-stat">
-                          <span className="route-label">Ледокол</span>
-                          <span className="route-value">{analyticsData.routes.optimal.icebreaker_required ? 'Да' : 'Нет'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="route-efficiency">
-                    <div className="efficiency-label">Экономия (оптимальный):</div>
-                    <div className="efficiency-values">
-                      <span className="efficiency-item">
-                        📏 {analyticsData.routes.safe.distance_km - analyticsData.routes.optimal.distance_km} км
-                      </span>
-                      <span className="efficiency-item">
-                        ⏱️ {analyticsData.routes.safe.estimated_time_hours - analyticsData.routes.optimal.estimated_time_hours} ч
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
           )}
 

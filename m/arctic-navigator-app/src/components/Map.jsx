@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import RouteBuilder from './RouteBuilder';
 
 const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) => {
   const mapRef = useRef(null);
@@ -10,6 +11,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
   const nspRef = useRef(null);
   const [mouseCoords, setMouseCoords] = useState(null);
   const [mapView, setMapView] = useState({ zoom: 5, center: [76, 80] });
+  const [calculatedRoutes, setCalculatedRoutes] = useState(null);
 
   // Инициализация карты
   useEffect(() => {
@@ -436,7 +438,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       });
     }
 
-    // Добавление судов с иконкой ship.png
+    // Добавление судов
     if (shipsLayer && ships && ships.length > 0) {
       ships.forEach(ship => {
         const colors = {
@@ -448,44 +450,10 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
         
         const color = colors[ship.type] || '#64748b';
         
-        const shipIcon = L.divIcon({
-          html: `
-            <div style="position: relative; width: 60px; height: 60px;">
-              <div style="
-                position: absolute;
-                width: 50px;
-                height: 50px;
-                left: -5px;
-                top: -5px;
-                background: ${color};
-                border-radius: 50%;
-                opacity: 0.2;
-                animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-              "></div>
-              <img 
-                src="/ship.png" 
-                style="
-                  position: absolute;
-                  width: 35px;
-                  height: 35px;
-                  left: 0;
-                  top: 0;
-                  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
-                "
-                alt="Ship"
-              />
-            </div>
-            <style>
-              @keyframes ping {
-                75%, 100% {
-                  transform: scale(1.6);
-                  opacity: 0;
-                }
-              }
-            </style>
-          `,
-          iconSize: [60, 60],
-          iconAnchor: [30, 30],
+        const shipIcon = L.icon({
+          iconUrl: '/ship.png',
+          iconSize: [32, 32],
+          iconAnchor: [16, 16],
           className: 'ship-marker-custom'
         });
 
@@ -530,6 +498,10 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
     }
   }, [iceData, ships, iceLayer, shipsLayer, routesLayer]);
 
+  const handleRouteCalculated = (routes) => {
+    setCalculatedRoutes(routes);
+  };
+
   return (
     <>
       <div ref={mapRef} style={{ height: '100%', width: '100%' }}></div>
@@ -539,6 +511,15 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
         <div className="mouse-coords">
           📍 {mouseCoords.lat}°N, {mouseCoords.lng}°E
         </div>
+      )}
+      
+      {/* Конструктор маршрутов */}
+      {mapInstanceRef.current && (
+        <RouteBuilder 
+          map={mapInstanceRef.current} 
+          iceData={iceData}
+          onRouteCalculated={handleRouteCalculated}
+        />
       )}
       
       {/* Информация о системе */}
@@ -558,6 +539,14 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
             4/6
           </span>
         </div>
+        {calculatedRoutes && (
+          <div className="status-item">
+            <span className="status-label">Маршрут</span>
+            <span className="status-value" style={{ color: '#4ade80' }}>
+              ✅ Построен
+            </span>
+          </div>
+        )}
       </div>
     </>
   );
