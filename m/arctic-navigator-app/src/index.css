@@ -688,3 +688,25 @@ a.leaflet-control-attribution-toggle,
     max-width: 380px;
   }
 }
+
+
+/* Кастомные стрелки - дополнение к основному index.css */
+
+/* Кастомные стрелки */
+.custom-arrow-icon {
+  background: none !important;
+  border: none !important;
+  pointer-events: none;
+  box-shadow: none !important;
+}
+
+.custom-arrow-icon svg {
+  transition: transform 0.3s ease;
+}
+
+/* Анимация для стрелок при наведении на маршрут */
+.ship-future-route:hover + .custom-arrow-icon svg {
+  transform: scale(1.2);
+}
+
+
