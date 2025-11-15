@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const Sidebar = ({ 
   ships, 
@@ -12,6 +12,8 @@ const Sidebar = ({
   onShipClick
 }) => {
   const [isOpen, setIsOpen] = useState(true);
+  const [showAnalytics, setShowAnalytics] = useState(false);
+  const [analyticsData, setAnalyticsData] = useState(null);
 
   const shipColors = {
     icebreaker: '#3b82f6',
@@ -25,6 +27,82 @@ const Sidebar = ({
     tanker: 'Танкер',
     cargo: 'Грузовой',
     research: 'Исследовательский'
+  };
+
+  useEffect(() => {
+    if (showAnalytics) {
+      loadAnalyticsData();
+    }
+  }, [ships, showAnalytics]);
+
+  const loadAnalyticsData = async () => {
+    try {
+      const [iceRes, statusRes, routesRes] = await Promise.all([
+        fetch('/api/ice'),
+        fetch('/api/status'),
+        fetch('/api/routes')
+      ]);
+      
+      const ice = await iceRes.json();
+      const status = await statusRes.json();
+      const routes = await routesRes.json();
+      
+      // Подсчет статистики по судам
+      const shipsByType = ships.reduce((acc, ship) => {
+        acc[ship.type] = (acc[ship.type] || 0) + 1;
+        return acc;
+      }, {});
+
+      const avgSpeed = ships.length > 0 
+        ? (ships.reduce((sum, s) => sum + s.speed, 0) / ships.length).toFixed(1)
+        : 0;
+
+      const maxSpeed = ships.length > 0 
+        ? Math.max(...ships.map(s => s.speed))
+        : 0;
+
+      // Статистика по льду
+      const iceZones = ice.features || [];
+      const dangerZones = {
+        high: iceZones.filter(z => z.properties.danger_level === 'high').length,
+        medium: iceZones.filter(z => z.properties.danger_level === 'medium').length,
+        low: iceZones.filter(z => z.properties.danger_level === 'low').length
+      };
+
+      const avgConcentration = iceZones.length > 0
+        ? (iceZones.reduce((sum, z) => sum + z.properties.concentration, 0) / iceZones.length).toFixed(0)
+        : 0;
+
+      const avgThickness = iceZones.length > 0
+        ? (iceZones.reduce((sum, z) => sum + z.properties.thickness_cm, 0) / iceZones.length).toFixed(0)
+        : 0;
+
+      // Статистика по маршрутам
+      const safeRoute = routes.routes?.safe;
+      const optimalRoute = routes.routes?.optimal;
+
+      setAnalyticsData({
+        shipsByType,
+        avgSpeed,
+        maxSpeed,
+        dangerZones,
+        avgConcentration,
+        avgThickness,
+        totalIceZones: iceZones.length,
+        satellites: status.satellites,
+        coverage: status.data_coverage,
+        routes: {
+          safe: safeRoute,
+          optimal: optimalRoute
+        }
+      });
+    } catch (err) {
+      console.error('Ошибка загрузки аналитики:', err);
+    }
+  };
+
+  const getPercentage = (value, total) => {
+    return total > 0 ? ((value / total) * 100).toFixed(0) : 0;
   };
 
   return (
@@ -63,6 +141,211 @@ const Sidebar = ({
         </div>
         
         <div className="sidebar-content">
+          {/* Кнопка аналитики */}
+          <button 
+            onClick={() => setShowAnalytics(!showAnalytics)}
+            className="btn-analytics"
+          >
+            <span>{showAnalytics ? '📊' : '📈'}</span>
+            <span>{showAnalytics ? 'Скрыть аналитику' : 'Показать аналитику'}</span>
+          </button>
+
+          {/* Панель аналитики */}
+          {showAnalytics && analyticsData && (
+            <div className="analytics-panel">
+              <div className="analytics-header">
+                📊 Аналитический модуль
+              </div>
+
+              {/* Статистика по судам */}
+              <div className="analytics-section">
+                <div className="analytics-section-title">🚢 Суда в зоне</div>
+                <div className="analytics-grid">
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Всего судов</div>
+                    <div className="analytics-card-value">{ships.length}</div>
+                  </div>
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Ср. скорость</div>
+                    <div className="analytics-card-value">{analyticsData.avgSpeed} <span className="unit">уз</span></div>
+                  </div>
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Макс. скорость</div>
+                    <div className="analytics-card-value">{analyticsData.maxSpeed} <span className="unit">уз</span></div>
+                  </div>
+                </div>
+
+                <div className="analytics-breakdown">
+                  <div className="breakdown-title">По типам:</div>
+                  {Object.entries(analyticsData.shipsByType).map(([type, count]) => (
+                    <div key={type} className="breakdown-item">
+                      <div className="breakdown-info">
+                        <span className="breakdown-label">{shipLabels[type]}</span>
+                        <span className="breakdown-value">{count}</span>
+                      </div>
+                      <div className="breakdown-bar">
+                        <div 
+                          className="breakdown-bar-fill"
+                          style={{ 
+                            width: `${getPercentage(count, ships.length)}%`,
+                            background: shipColors[type]
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Статистика по льду */}
+              <div className="analytics-section">
+                <div className="analytics-section-title">❄️ Ледовая обстановка</div>
+                <div className="analytics-grid">
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Ледовых зон</div>
+                    <div className="analytics-card-value">{analyticsData.totalIceZones}</div>
+                  </div>
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Ср. сплоченность</div>
+                    <div className="analytics-card-value">{analyticsData.avgConcentration}<span className="unit">%</span></div>
+                  </div>
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Ср. толщина</div>
+                    <div className="analytics-card-value">{analyticsData.avgThickness}<span className="unit">см</span></div>
+                  </div>
+                </div>
+
+                <div className="analytics-breakdown">
+                  <div className="breakdown-title">Уровни опасности:</div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-info">
+                      <span className="breakdown-label">⚠️ Высокий</span>
+                      <span className="breakdown-value">{analyticsData.dangerZones.high}</span>
+                    </div>
+                    <div className="breakdown-bar">
+                      <div 
+                        className="breakdown-bar-fill"
+                        style={{ 
+                          width: `${getPercentage(analyticsData.dangerZones.high, analyticsData.totalIceZones)}%`,
+                          background: '#ef4444'
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-info">
+                      <span className="breakdown-label">⚡ Средний</span>
+                      <span className="breakdown-value">{analyticsData.dangerZones.medium}</span>
+                    </div>
+                    <div className="breakdown-bar">
+                      <div 
+                        className="breakdown-bar-fill"
+                        style={{ 
+                          width: `${getPercentage(analyticsData.dangerZones.medium, analyticsData.totalIceZones)}%`,
+                          background: '#f59e0b'
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                  <div className="breakdown-item">
+                    <div className="breakdown-info">
+                      <span className="breakdown-label">✅ Низкий</span>
+                      <span className="breakdown-value">{analyticsData.dangerZones.low}</span>
+                    </div>
+                    <div className="breakdown-bar">
+                      <div 
+                        className="breakdown-bar-fill"
+                        style={{ 
+                          width: `${getPercentage(analyticsData.dangerZones.low, analyticsData.totalIceZones)}%`,
+                          background: '#4ade80'
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Статистика по спутникам */}
+              <div className="analytics-section">
+                <div className="analytics-section-title">🛰️ Спутниковая сеть</div>
+                <div className="analytics-grid">
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Активных</div>
+                    <div className="analytics-card-value" style={{ color: '#4ade80' }}>
+                      {analyticsData.satellites.active}/{analyticsData.satellites.total}
+                    </div>
+                  </div>
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Покрытие</div>
+                    <div className="analytics-card-value">{analyticsData.coverage.coverage_percentage}<span className="unit">%</span></div>
+                  </div>
+                  <div className="analytics-card">
+                    <div className="analytics-card-label">Задержка</div>
+                    <div className="analytics-card-value">{analyticsData.coverage.average_latency_minutes}<span className="unit">мин</span></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Статистика по маршрутам */}
+              {analyticsData.routes.safe && (
+                <div className="analytics-section">
+                  <div className="analytics-section-title">🛤️ Маршруты</div>
+                  <div className="route-comparison">
+                    <div className="route-card">
+                      <div className="route-card-header" style={{ background: '#22c55e' }}>
+                        Безопасный
+                      </div>
+                      <div className="route-card-body">
+                        <div className="route-stat">
+                          <span className="route-label">Расстояние</span>
+                          <span className="route-value">{analyticsData.routes.safe.distance_km} км</span>
+                        </div>
+                        <div className="route-stat">
+                          <span className="route-label">Время</span>
+                          <span className="route-value">{analyticsData.routes.safe.estimated_time_hours} ч</span>
+                        </div>
+                        <div className="route-stat">
+                          <span className="route-label">Ледокол</span>
+                          <span className="route-value">{analyticsData.routes.safe.icebreaker_required ? 'Да' : 'Нет'}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="route-card">
+                      <div className="route-card-header" style={{ background: '#3b82f6' }}>
+                        Оптимальный
+                      </div>
+                      <div className="route-card-body">
+                        <div className="route-stat">
+                          <span className="route-label">Расстояние</span>
+                          <span className="route-value">{analyticsData.routes.optimal.distance_km} км</span>
+                        </div>
+                        <div className="route-stat">
+                          <span className="route-label">Время</span>
+                          <span className="route-value">{analyticsData.routes.optimal.estimated_time_hours} ч</span>
+                        </div>
+                        <div className="route-stat">
+                          <span className="route-label">Ледокол</span>
+                          <span className="route-value">{analyticsData.routes.optimal.icebreaker_required ? 'Да' : 'Нет'}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="route-efficiency">
+                    <div className="efficiency-label">Экономия (оптимальный):</div>
+                    <div className="efficiency-values">
+                      <span className="efficiency-item">
+                        📏 {analyticsData.routes.safe.distance_km - analyticsData.routes.optimal.distance_km} км
+                      </span>
+                      <span className="efficiency-item">
+                        ⏱️ {analyticsData.routes.safe.estimated_time_hours - analyticsData.routes.optimal.estimated_time_hours} ч
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Контроль слоёв */}
           <div className="panel">
             <div className="panel-header">

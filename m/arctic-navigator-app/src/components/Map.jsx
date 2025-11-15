@@ -436,7 +436,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       });
     }
 
-    // Добавление судов
+    // Добавление судов с иконкой ship.png
     if (shipsLayer && ships && ships.length > 0) {
       ships.forEach(ship => {
         const colors = {
@@ -445,54 +445,47 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
           cargo: '#10b981',
           research: '#f59e0b'
         };
-
-        const icons = {
-          icebreaker: '⚓',
-          tanker: '🛢️',
-          cargo: '📦',
-          research: '🔬'
-        };
         
         const color = colors[ship.type] || '#64748b';
-        const icon = icons[ship.type] || '🚢';
         
         const shipIcon = L.divIcon({
           html: `
-            <div style="position: relative;">
+            <div style="position: relative; width: 60px; height: 60px;">
               <div style="
                 position: absolute;
-                width: 40px;
-                height: 40px;
+                width: 50px;
+                height: 50px;
+                left: -5px;
+                top: -5px;
                 background: ${color};
                 border-radius: 50%;
-                opacity: 0.3;
+                opacity: 0.2;
                 animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
               "></div>
-              <div style="
-                position: relative;
-                background: ${color};
-                border-radius: 50%;
-                width: 32px;
-                height: 32px;
-                border: 3px solid white;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 16px;
-              ">${icon}</div>
+              <img 
+                src="/ship.png" 
+                style="
+                  position: absolute;
+                  width: 35px;
+                  height: 35px;
+                  left: 0;
+                  top: 0;
+                  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));
+                "
+                alt="Ship"
+              />
             </div>
             <style>
               @keyframes ping {
                 75%, 100% {
-                  transform: scale(1.5);
+                  transform: scale(1.6);
                   opacity: 0;
                 }
               }
             </style>
           `,
-          iconSize: [40, 40],
-          iconAnchor: [20, 20],
+          iconSize: [60, 60],
+          iconAnchor: [30, 30],
           className: 'ship-marker-custom'
         });
 
