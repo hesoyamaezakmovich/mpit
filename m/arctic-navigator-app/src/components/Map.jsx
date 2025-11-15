@@ -11,78 +11,6 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
   const [mouseCoords, setMouseCoords] = useState(null);
   const [mapView, setMapView] = useState({ zoom: 5, center: [76, 80] });
 
-  // Функция для создания кастомной стрелки SVG
-  const createArrowIcon = (angle, color = '#00a0e3', size = 20) => {
-    return L.divIcon({
-      html: `
-        <svg width="${size}" height="${size}" viewBox="0 0 24 24" 
-             style="transform: rotate(${angle}deg); filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));">
-          <path d="M12 2 L20 12 L12 22 L12 14 L4 12 L12 10 Z" 
-                fill="${color}" 
-                stroke="white" 
-                stroke-width="1.5"
-                opacity="0.9"/>
-        </svg>
-      `,
-      className: 'custom-arrow-icon',
-      iconSize: [size, size],
-      iconAnchor: [size / 2, size / 2]
-    });
-  };
-
-  // Функция для расчета угла между двумя точками
-  const calculateAngle = (lat1, lon1, lat2, lon2) => {
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const y = Math.sin(dLon) * Math.cos(lat2 * Math.PI / 180);
-    const x = Math.cos(lat1 * Math.PI / 180) * Math.sin(lat2 * Math.PI / 180) -
-              Math.sin(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.cos(dLon);
-    const bearing = Math.atan2(y, x) * 180 / Math.PI;
-    // Нормализуем bearing от 0 до 360
-    const normalizedBearing = ((bearing + 360) % 360);
-    // Стрелка по умолчанию смотрит вверх (север = 90°), поэтому поворачиваем на (90 - bearing)
-    // Это преобразует bearing (где 0°=восток, 90°=север) в CSS rotation (где 0°=вверх)
-    const angle = (90 - normalizedBearing + 360) % 360;
-    return angle;
-  };
-
-  // Функция для расстановки стрелок вдоль маршрута
-  const addArrowsToRoute = (map, route, color = '#00a0e3', arrowCount = 8) => {
-    const arrows = [];
-    const routeLength = route.length;
-    
-    // Расставляем стрелки равномерно вдоль маршрута
-    for (let i = 0; i < arrowCount; i++) {
-      // Вычисляем индекс точки для размещения стрелки
-      const index = Math.floor((routeLength - 1) * (i + 1) / (arrowCount + 1));
-      
-      if (index > 0 && index < routeLength) {
-        const prevPoint = route[index - 1];
-        const currentPoint = route[index];
-        
-        // Вычисляем угол направления
-        const angle = calculateAngle(
-          prevPoint[0], prevPoint[1],
-          currentPoint[0], currentPoint[1]
-        );
-        
-        // Создаем маркер со стрелкой
-        const arrowMarker = L.marker(
-          [currentPoint[0], currentPoint[1]], 
-          { 
-            icon: createArrowIcon(angle, color, 16),
-            interactive: false,
-            zIndexOffset: -100
-          }
-        );
-        
-        arrows.push(arrowMarker);
-        arrowMarker.addTo(map);
-      }
-    }
-    
-    return arrows;
-  };
-
   // Инициализация карты
   useEffect(() => {
     if (!mapRef.current || mapInstanceRef.current) return;
@@ -102,14 +30,14 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       maxZoom: 19
     }).addTo(map);
 
-    // Статичная координатная сетка (фиксированные линии)
+    // Статичная координатная сетка (фиксированные линии БЕЗ подписей)
     const graticule = L.layerGroup();
     
     // Определяем статичные интервалы для сетки
     const latLines = [65, 70, 75, 80, 85];
     const lngLines = [40, 60, 80, 100, 120, 140, 160, 180];
     
-    // Рисуем линии широты
+    // Рисуем линии широты БЕЗ подписей
     latLines.forEach(lat => {
       L.polyline(
         [[lat, -40], [lat, 220]], 
@@ -121,21 +49,9 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
           className: 'graticule-line'
         }
       ).addTo(graticule);
-      
-      // Подпись широты
-      const latLabel = L.divIcon({
-        html: `<div class="graticule-label-fixed">${lat}°N</div>`,
-        className: 'graticule-label-container',
-        iconSize: [60, 20],
-        iconAnchor: [-5, 10]
-      });
-      L.marker([lat, 45], { 
-        icon: latLabel,
-        interactive: false
-      }).addTo(graticule);
     });
     
-    // Рисуем линии долготы
+    // Рисуем линии долготы БЕЗ подписей
     lngLines.forEach(lng => {
       L.polyline(
         [[60, lng], [85, lng]], 
@@ -147,18 +63,6 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
           className: 'graticule-line'
         }
       ).addTo(graticule);
-      
-      // Подпись долготы
-      const lngLabel = L.divIcon({
-        html: `<div class="graticule-label-fixed">${lng}°E</div>`,
-        className: 'graticule-label-container',
-        iconSize: [60, 20],
-        iconAnchor: [30, -5]
-      });
-      L.marker([67, lng], { 
-        icon: lngLabel,
-        interactive: false
-      }).addTo(graticule);
     });
     
     graticule.addTo(map);
@@ -198,7 +102,6 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       [69.12, 56.16],  // Направление к Карским Воротам
       [68.27, 54.39],  // Направление к Карским Воротам
       [67.97, 53.90],  // Приближение к Карским Воротам
-
 
       // Карское море
       [70.00, 55.00],  
@@ -268,10 +171,6 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
 
     // Создаем группу для СМП
     const nspGroup = L.layerGroup([nspLayer]);
-    
-    // Добавляем кастомные стрелки вдоль маршрута СМП (включая участок к Архангельску)
-    const nspArrows = addArrowsToRoute(map, nspRoute, '#00a0e3', 15);
-    nspArrows.forEach(arrow => nspGroup.addLayer(arrow));
     
     nspGroup.addTo(map);
     nspRef.current = nspGroup;
@@ -482,7 +381,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       layersRef.current.push(iceGeoJSON);
     }
 
-    // Добавление маршрутов судов
+    // Добавление маршрутов судов БЕЗ стрелок
     if (routesLayer && ships && ships.length > 0) {
       ships.forEach(ship => {
         const colors = {
@@ -532,10 +431,6 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
             className: 'ship-future-route'
           }
         ).addTo(map);
-        
-        // Добавляем кастомные стрелки вдоль планируемого маршрута (3 стрелки)
-        const routeArrows = addArrowsToRoute(map, futureRoutePoints, color, 3);
-        routeArrows.forEach(arrow => layersRef.current.push(arrow));
         
         layersRef.current.push(futureRoute);
       });

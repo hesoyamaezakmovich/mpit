@@ -11,56 +11,6 @@
       "type": "Feature",
       "properties": {
         "id": "ice_zone_01",
-        "concentration": 75,
-        "thickness": "medium",
-        "thickness_cm": 120,
-        "type": "Плотный лёд",
-        "age": "first_year",
-        "danger_level": "medium",
-        "drift_speed": 0.3,
-        "drift_direction": 45,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [75.0, 79.0],
-          [80.0, 79.0],
-          [80.0, 81.0],
-          [75.0, 81.0],
-          [75.0, 79.0]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_02",
-        "concentration": 95,
-        "thickness": "heavy",
-        "thickness_cm": 280,
-        "type": "Многолетний лёд",
-        "age": "multi_year",
-        "danger_level": "high",
-        "drift_speed": 0.1,
-        "drift_direction": 90,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [82.0, 80.5],
-          [88.0, 80.5],
-          [88.0, 82.5],
-          [82.0, 82.5],
-          [82.0, 80.5]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_03",
         "concentration": 45,
         "thickness": "light",
         "thickness_cm": 60,
@@ -74,11 +24,61 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [70.0, 78.0],
-          [74.0, 78.0],
-          [74.0, 79.5],
-          [70.0, 79.5],
-          [70.0, 78.0]
+          [32.0, 68.5],
+          [34.5, 68.5],
+          [34.5, 69.5],
+          [32.0, 69.5],
+          [32.0, 68.5]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_02",
+        "concentration": 65,
+        "thickness": "medium",
+        "thickness_cm": 120,
+        "type": "Плотный лёд",
+        "age": "first_year",
+        "danger_level": "medium",
+        "drift_speed": 0.35,
+        "drift_direction": 45,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [38.0, 65.0],
+          [42.0, 65.0],
+          [42.0, 67.0],
+          [38.0, 67.0],
+          [38.0, 65.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_03",
+        "concentration": 50,
+        "thickness": "light",
+        "thickness_cm": 70,
+        "type": "Молодой лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.6,
+        "drift_direction": 90,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [52.0, 67.5],
+          [56.0, 67.5],
+          [56.0, 69.5],
+          [52.0, 69.5],
+          [52.0, 67.5]
         ]]
       }
     },
@@ -86,6 +86,31 @@
       "type": "Feature",
       "properties": {
         "id": "ice_zone_04",
+        "concentration": 75,
+        "thickness": "medium",
+        "thickness_cm": 140,
+        "type": "Дрейфующий лёд",
+        "age": "first_year",
+        "danger_level": "medium",
+        "drift_speed": 0.4,
+        "drift_direction": 180,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [56.5, 70.0],
+          [60.5, 70.0],
+          [60.5, 72.0],
+          [56.5, 72.0],
+          [56.5, 70.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_05",
         "concentration": 85,
         "thickness": "heavy",
         "thickness_cm": 220,
@@ -99,36 +124,11 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [90.0, 81.0],
-          [96.0, 81.0],
-          [96.0, 83.0],
-          [90.0, 83.0],
-          [90.0, 81.0]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_05",
-        "concentration": 65,
-        "thickness": "medium",
-        "thickness_cm": 140,
-        "type": "Дрейфующий лёд",
-        "age": "first_year",
-        "danger_level": "medium",
-        "drift_speed": 0.4,
-        "drift_direction": 180,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [68.0, 76.5],
-          [72.0, 76.5],
-          [72.0, 78.0],
-          [68.0, 78.0],
-          [68.0, 76.5]
+          [64.0, 71.5],
+          [69.0, 71.5],
+          [69.0, 74.0],
+          [64.0, 74.0],
+          [64.0, 71.5]
         ]]
       }
     },
@@ -136,31 +136,6 @@
       "type": "Feature",
       "properties": {
         "id": "ice_zone_06",
-        "concentration": 55,
-        "thickness": "light",
-        "thickness_cm": 80,
-        "type": "Молодой лёд",
-        "age": "new_ice",
-        "danger_level": "low",
-        "drift_speed": 0.6,
-        "drift_direction": 270,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [98.0, 79.5],
-          [102.0, 79.5],
-          [102.0, 81.0],
-          [98.0, 81.0],
-          [98.0, 79.5]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_07",
         "concentration": 70,
         "thickness": "medium",
         "thickness_cm": 130,
@@ -174,46 +149,21 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [72.5, 52.0],
-          [75.0, 52.0],
-          [75.0, 58.0],
-          [72.5, 58.0],
-          [72.5, 52.0]
+          [74.0, 72.5],
+          [78.0, 72.5],
+          [78.0, 74.5],
+          [74.0, 74.5],
+          [74.0, 72.5]
         ]]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "ice_zone_08",
-        "concentration": 50,
-        "thickness": "light",
-        "thickness_cm": 70,
-        "type": "Разреженный лёд",
-        "age": "new_ice",
-        "danger_level": "low",
-        "drift_speed": 0.55,
-        "drift_direction": 90,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [73.0, 65.0],
-          [76.0, 65.0],
-          [76.0, 72.0],
-          [73.0, 72.0],
-          [73.0, 65.0]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_09",
-        "concentration": 90,
+        "id": "ice_zone_07",
+        "concentration": 95,
         "thickness": "heavy",
-        "thickness_cm": 250,
+        "thickness_cm": 280,
         "type": "Многолетний паковый",
         "age": "multi_year",
         "danger_level": "high",
@@ -224,43 +174,43 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [77.5, 85.0],
-          [80.0, 85.0],
-          [80.0, 90.0],
-          [77.5, 90.0],
-          [77.5, 85.0]
+          [78.0, 75.0],
+          [85.0, 75.0],
+          [85.0, 78.0],
+          [78.0, 78.0],
+          [78.0, 75.0]
         ]]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "ice_zone_10",
-        "concentration": 60,
-        "thickness": "medium",
-        "thickness_cm": 110,
-        "type": "Дрейфующий лёд",
-        "age": "first_year",
-        "danger_level": "medium",
-        "drift_speed": 0.4,
-        "drift_direction": 135,
+        "id": "ice_zone_08",
+        "concentration": 90,
+        "thickness": "heavy",
+        "thickness_cm": 250,
+        "type": "Многолетний лёд",
+        "age": "multi_year",
+        "danger_level": "high",
+        "drift_speed": 0.18,
+        "drift_direction": 0,
         "last_update": "2025-11-14T10:30:00Z"
       },
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [74.0, 88.0],
-          [77.0, 88.0],
-          [77.0, 98.0],
-          [74.0, 98.0],
-          [74.0, 88.0]
+          [92.0, 76.5],
+          [100.0, 76.5],
+          [100.0, 78.5],
+          [92.0, 78.5],
+          [92.0, 76.5]
         ]]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "ice_zone_11",
+        "id": "ice_zone_09",
         "concentration": 80,
         "thickness": "heavy",
         "thickness_cm": 200,
@@ -274,93 +224,18 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [78.0, 108.0],
-          [81.0, 108.0],
-          [81.0, 118.0],
-          [78.0, 118.0],
-          [78.0, 108.0]
+          [104.0, 77.0],
+          [112.0, 77.0],
+          [112.0, 79.0],
+          [104.0, 79.0],
+          [104.0, 77.0]
         ]]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "ice_zone_12",
-        "concentration": 40,
-        "thickness": "light",
-        "thickness_cm": 50,
-        "type": "Молодой лёд",
-        "age": "new_ice",
-        "danger_level": "low",
-        "drift_speed": 0.65,
-        "drift_direction": 210,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [72.0, 120.0],
-          [75.0, 120.0],
-          [75.0, 130.0],
-          [72.0, 130.0],
-          [72.0, 120.0]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_13",
-        "concentration": 75,
-        "thickness": "medium",
-        "thickness_cm": 125,
-        "type": "Плотный лёд",
-        "age": "first_year",
-        "danger_level": "medium",
-        "drift_speed": 0.3,
-        "drift_direction": 240,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [70.5, 160.0],
-          [73.0, 160.0],
-          [73.0, 170.0],
-          [70.5, 170.0],
-          [70.5, 160.0]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_14",
-        "concentration": 85,
-        "thickness": "heavy",
-        "thickness_cm": 240,
-        "type": "Многолетний лёд",
-        "age": "multi_year",
-        "danger_level": "high",
-        "drift_speed": 0.18,
-        "drift_direction": 0,
-        "last_update": "2025-11-14T10:30:00Z"
-      },
-      "geometry": {
-        "type": "Polygon",
-        "coordinates": [[
-          [79.0, 95.0],
-          [82.0, 95.0],
-          [82.0, 105.0],
-          [79.0, 105.0],
-          [79.0, 95.0]
-        ]]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "ice_zone_15",
+        "id": "ice_zone_10",
         "concentration": 65,
         "thickness": "medium",
         "thickness_cm": 115,
@@ -374,11 +249,186 @@
       "geometry": {
         "type": "Polygon",
         "coordinates": [[
-          [75.5, 70.0],
-          [78.0, 70.0],
-          [78.0, 75.0],
-          [75.5, 75.0],
-          [75.5, 70.0]
+          [118.0, 76.0],
+          [124.0, 76.0],
+          [124.0, 77.5],
+          [118.0, 77.5],
+          [118.0, 76.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_11",
+        "concentration": 55,
+        "thickness": "light",
+        "thickness_cm": 80,
+        "type": "Молодой лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.6,
+        "drift_direction": 270,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [128.0, 72.0],
+          [134.0, 72.0],
+          [134.0, 74.0],
+          [128.0, 74.0],
+          [128.0, 72.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_12",
+        "concentration": 75,
+        "thickness": "medium",
+        "thickness_cm": 125,
+        "type": "Плотный лёд",
+        "age": "first_year",
+        "danger_level": "medium",
+        "drift_speed": 0.3,
+        "drift_direction": 240,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [138.0, 72.5],
+          [144.0, 72.5],
+          [144.0, 74.5],
+          [138.0, 74.5],
+          [138.0, 72.5]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_13",
+        "concentration": 60,
+        "thickness": "medium",
+        "thickness_cm": 110,
+        "type": "Дрейфующий лёд",
+        "age": "first_year",
+        "danger_level": "medium",
+        "drift_speed": 0.4,
+        "drift_direction": 135,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [148.0, 72.5],
+          [154.0, 72.5],
+          [154.0, 74.0],
+          [148.0, 74.0],
+          [148.0, 72.5]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_14",
+        "concentration": 50,
+        "thickness": "light",
+        "thickness_cm": 70,
+        "type": "Разреженный лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.55,
+        "drift_direction": 90,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [158.0, 71.5],
+          [164.0, 71.5],
+          [164.0, 73.0],
+          [158.0, 73.0],
+          [158.0, 71.5]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_15",
+        "concentration": 40,
+        "thickness": "light",
+        "thickness_cm": 50,
+        "type": "Молодой лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.65,
+        "drift_direction": 210,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [168.0, 70.0],
+          [174.0, 70.0],
+          [174.0, 72.0],
+          [168.0, 72.0],
+          [168.0, 70.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_16",
+        "concentration": 45,
+        "thickness": "light",
+        "thickness_cm": 60,
+        "type": "Разреженный лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.5,
+        "drift_direction": 180,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [178.0, 69.0],
+          [184.0, 69.0],
+          [184.0, 71.0],
+          [178.0, 71.0],
+          [178.0, 69.0]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "ice_zone_17",
+        "concentration": 35,
+        "thickness": "light",
+        "thickness_cm": 45,
+        "type": "Молодой лёд",
+        "age": "new_ice",
+        "danger_level": "low",
+        "drift_speed": 0.7,
+        "drift_direction": 150,
+        "last_update": "2025-11-14T10:30:00Z"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [188.0, 67.5],
+          [194.0, 67.5],
+          [194.0, 69.5],
+          [188.0, 69.5],
+          [188.0, 67.5]
         ]]
       }
     }
