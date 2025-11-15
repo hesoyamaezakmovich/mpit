@@ -1,5 +1,3 @@
-@import './styles/modal-styles.css';
-@import './styles/ai-tools-styles.css';
 
 /* Импорт стилей Leaflet */
 @import 'leaflet/dist/leaflet.css';
@@ -713,4 +711,64 @@ a.leaflet-control-attribution-toggle,
   transform: scale(1.2);
 }
 
+
+/* Обновленный заголовок приложения с логотипом */
+.app-header {
+  padding: 20px 20px 20px 80px;
+  background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.app-header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.app-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.app-header-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0;
+  color: white;
+  line-height: 1.2;
+}
+
+.app-subtitle {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 4px;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+/* Адаптивность для логотипа */
+@media (max-width: 768px) {
+  .app-logo {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .app-title {
+    font-size: 20px;
+  }
+  
+  .app-subtitle {
+    font-size: 10px;
+  }
+}
 

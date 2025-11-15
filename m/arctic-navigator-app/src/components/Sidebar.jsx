@@ -9,9 +9,7 @@ const Sidebar = ({
   onShipsLayerChange,
   onRoutesLayerChange,
   onRefresh,
-  onShipClick,
-  onOpenRouteAnalysis,
-  onOpenIceDetection
+  onShipClick
 }) => {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -47,45 +45,24 @@ const Sidebar = ({
       {/* Боковая панель */}
       <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <div className="app-header">
-          <h1 className="app-title">
-            OKAK-Navigation
-          </h1>
-          <div className="app-subtitle">
-            Мониторинг ледовой обстановки в реальном времени
+          <div className="app-header-content">
+            <img 
+              src="/logo.png" 
+              alt="OKAK Navigation Logo" 
+              className="app-logo"
+            />
+            <div className="app-header-text">
+              <h1 className="app-title">
+                OKAK-Navigation
+              </h1>
+              <div className="app-subtitle">
+                Орбитальный комплекс арктического контроля
+              </div>
+            </div>
           </div>
         </div>
         
         <div className="sidebar-content">
-          {/* AI Инструменты */}
-          <div className="panel">
-            <div className="panel-header">
-              🤖 AI Инструменты
-            </div>
-            <div className="ai-tools-grid">
-              <button 
-                onClick={onOpenRouteAnalysis}
-                className="ai-tool-button"
-              >
-                <span className="tool-icon">🧭</span>
-                <div className="tool-info">
-                  <div className="tool-name">Анализ маршрута</div>
-                  <div className="tool-desc">Оценка рисков пути</div>
-                </div>
-              </button>
-
-              <button 
-                onClick={onOpenIceDetection}
-                className="ai-tool-button"
-              >
-                <span className="tool-icon">🛰️</span>
-                <div className="tool-info">
-                  <div className="tool-name">Детекция льда</div>
-                  <div className="tool-desc">Анализ снимков</div>
-                </div>
-              </button>
-            </div>
-          </div>
-
           {/* Контроль слоёв */}
           <div className="panel">
             <div className="panel-header">
