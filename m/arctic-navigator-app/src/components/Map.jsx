@@ -8,6 +8,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
   const layersRef = useRef([]);
   const seaMapLayerRef = useRef(null);
   const graticuleRef = useRef(null);
+  const nspRef = useRef(null);
   const [mouseCoords, setMouseCoords] = useState(null);
   const [mapView, setMapView] = useState({ zoom: 5, center: [76, 80] });
 
@@ -30,128 +31,216 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       maxZoom: 19
     }).addTo(map);
 
-    // Простая координатная сетка
+    // Статичная координатная сетка (фиксированные линии)
     const graticule = L.layerGroup();
     
-    const updateGraticule = () => {
-      graticule.clearLayers();
-      const bounds = map.getBounds();
-      const zoom = map.getZoom();
-      
-      // Интервал в зависимости от зума
-      let interval = 10;
-      if (zoom >= 5 && zoom < 7) interval = 5;
-      if (zoom >= 7 && zoom < 10) interval = 2;
-      if (zoom >= 10) interval = 1;
-      
-      // Ограничиваем минимальный интервал, чтобы метки не были слишком частыми
-      const latRange = bounds.getNorth() - bounds.getSouth();
-      const lngRange = bounds.getEast() - bounds.getWest();
-      if (latRange < interval * 2) interval = Math.max(interval, latRange / 3);
-      if (lngRange < interval * 2) interval = Math.max(interval, lngRange / 3);
-      
-      // Линии широты
-      for (let lat = Math.floor(bounds.getSouth() / interval) * interval; 
-           lat <= bounds.getNorth(); 
-           lat += interval) {
-        // Пропускаем, если линия слишком близко к границе
-        if (lat < bounds.getSouth() || lat > bounds.getNorth()) continue;
-        
-        L.polyline(
-          [[lat, bounds.getWest()], [lat, bounds.getEast()]], 
-          {
-            color: '#3b82f6',
-            weight: 1,
-            opacity: 0.5,
-            interactive: false
-          }
-        ).addTo(graticule);
-        
-        // Подпись широты (слева, немного внутри видимой области)
-        const westOffset = bounds.getWest() + Math.max(0.5, (bounds.getEast() - bounds.getWest()) * 0.03);
-        const latLabel = L.divIcon({
-          html: `<div style="
-            background: rgba(15, 31, 58, 0.98) !important;
-            color: #60a5fa !important;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-            border: 2px solid rgba(59, 130, 246, 0.8) !important;
-            pointer-events: none;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-          ">${lat >= 0 ? lat.toFixed(1) + '°N' : Math.abs(lat).toFixed(1) + '°S'}</div>`,
-          className: 'graticule-label',
-          iconSize: [70, 26],
-          iconAnchor: [0, 13]
-        });
-        const latMarker = L.marker([lat, westOffset], { 
-          icon: latLabel,
+    // Определяем статичные интервалы для сетки
+    const latLines = [65, 70, 75, 80, 85];
+    const lngLines = [40, 60, 80, 100, 120, 140, 160, 180];
+    
+    // Рисуем линии широты
+    latLines.forEach(lat => {
+      L.polyline(
+        [[lat, -40], [lat, 220]], 
+        {
+          color: '#3b82f6',
+          weight: 1,
+          opacity: 0.3,
           interactive: false,
-          zIndexOffset: 2000,
-          pane: 'overlayPane'
-        });
-        latMarker.addTo(graticule);
-      }
+          className: 'graticule-line'
+        }
+      ).addTo(graticule);
       
-      // Линии долготы
-      for (let lng = Math.floor(bounds.getWest() / interval) * interval; 
-           lng <= bounds.getEast(); 
-           lng += interval) {
-        // Пропускаем, если линия слишком близко к границе
-        if (lng < bounds.getWest() || lng > bounds.getEast()) continue;
-        
-        L.polyline(
-          [[bounds.getSouth(), lng], [bounds.getNorth(), lng]], 
-          {
-            color: '#3b82f6',
-            weight: 1,
-            opacity: 0.5,
-            interactive: false
-          }
-        ).addTo(graticule);
-        
-        // Подпись долготы (внизу, немного внутри видимой области)
-        const southOffset = bounds.getSouth() + Math.max(0.2, (bounds.getNorth() - bounds.getSouth()) * 0.03);
-        const lngLabel = L.divIcon({
-          html: `<div style="
-            background: rgba(15, 31, 58, 0.98) !important;
-            color: #60a5fa !important;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 700;
-            white-space: nowrap;
-            border: 2px solid rgba(59, 130, 246, 0.8) !important;
-            pointer-events: none;
-            font-family: 'Courier New', monospace;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-            z-index: 9999;
-          ">${lng >= 0 ? lng.toFixed(1) + '°E' : Math.abs(lng).toFixed(1) + '°W'}</div>`,
-          className: 'graticule-label',
-          iconSize: [70, 26],
-          iconAnchor: [35, 0]
-        });
-        const lngMarker = L.marker([southOffset, lng], { 
-          icon: lngLabel,
+      // Подпись широты
+      const latLabel = L.divIcon({
+        html: `<div class="graticule-label-fixed">${lat}°N</div>`,
+        className: 'graticule-label-container',
+        iconSize: [60, 20],
+        iconAnchor: [-5, 10]
+      });
+      L.marker([lat, 45], { 
+        icon: latLabel,
+        interactive: false
+      }).addTo(graticule);
+    });
+    
+    // Рисуем линии долготы
+    lngLines.forEach(lng => {
+      L.polyline(
+        [[60, lng], [85, lng]], 
+        {
+          color: '#3b82f6',
+          weight: 1,
+          opacity: 0.3,
           interactive: false,
-          zIndexOffset: 2000,
-          pane: 'overlayPane'
-        });
-        lngMarker.addTo(graticule);
-      }
-    };
+          className: 'graticule-line'
+        }
+      ).addTo(graticule);
+      
+      // Подпись долготы
+      const lngLabel = L.divIcon({
+        html: `<div class="graticule-label-fixed">${lng}°E</div>`,
+        className: 'graticule-label-container',
+        iconSize: [60, 20],
+        iconAnchor: [30, -5]
+      });
+      L.marker([67, lng], { 
+        icon: lngLabel,
+        interactive: false
+      }).addTo(graticule);
+    });
     
     graticule.addTo(map);
     graticuleRef.current = graticule;
-    updateGraticule();
-    
-    map.on('moveend zoomend', updateGraticule);
+
+    // Северный Морской Путь (СМП) - точный маршрут
+    const nspRoute = [
+      // Западная часть (Баренцево море)
+      [69.00, 33.08],  // Мурманск
+      [69.50, 35.00],  
+      [70.00, 38.00],  
+      [70.30, 42.00],  
+      [70.50, 48.00],  
+      [70.80, 52.00],  
+      [71.00, 55.00],  
+      
+      // Карское море
+      [71.20, 58.00],  // Карские Ворота
+      [71.50, 60.00],
+      [72.00, 63.00],
+      [72.50, 66.00],
+      [73.00, 68.00],
+      [73.50, 70.00],  // Диксон
+      [73.80, 73.00],
+      [74.00, 76.00],
+      [74.20, 78.50],
+      
+      // Район мыса Челюскин
+      [75.00, 80.00],
+      [76.00, 82.00],
+      [77.00, 85.00],  // Проход севернее Таймыра
+      [77.50, 90.00],
+      [78.00, 95.00],
+      [78.20, 100.00],
+      [78.00, 105.00],
+      [77.50, 110.00],
+      
+      // Море Лаптевых
+      [77.00, 115.00],
+      [76.50, 120.00],
+      [76.00, 125.00],
+      [75.50, 130.00],
+      [75.00, 133.00],
+      [74.50, 136.00],
+      [74.00, 139.00],
+      [73.50, 141.00], // Тикси
+      
+      // Восточно-Сибирское море
+      [73.20, 145.00],
+      [73.00, 150.00],
+      [72.80, 155.00],
+      [72.50, 160.00],
+      [72.00, 165.00],
+      [71.50, 168.00],
+      [71.00, 170.00], // Певек
+      
+      // Чукотское море
+      [70.50, 173.00],
+      [70.00, 176.00],
+      [69.50, 179.00],
+      [69.00, 182.00],
+      [68.50, 185.00],
+      [68.00, 188.00],
+      [67.50, 190.00],
+      [67.00, 192.00],
+      [66.50, 194.00], // Берингов пролив
+    ];
+
+    const nspLayer = L.polyline(nspRoute, {
+      color: '#00a0e3',
+      weight: 5,
+      opacity: 0.85,
+      dashArray: '15, 8',
+      className: 'nsp-route',
+      smoothFactor: 1.5
+    });
+
+    // Добавляем стрелки направления на СМП
+    const nspDecorator = L.polylineDecorator(nspLayer, {
+      patterns: [
+        {
+          offset: '5%',
+          repeat: '12%',
+          symbol: L.Symbol.arrowHead({
+            pixelSize: 12,
+            polygon: false,
+            pathOptions: {
+              stroke: true,
+              weight: 3,
+              color: '#00a0e3',
+              opacity: 0.85
+            }
+          })
+        }
+      ]
+    });
+
+    const nspGroup = L.layerGroup([nspLayer, nspDecorator]);
+    nspGroup.addTo(map);
+    nspRef.current = nspGroup;
+
+    // Добавляем popup для СМП
+    nspLayer.bindPopup(`
+      <div class="popup-title">🛤️ Северный Морской Путь</div>
+      <div class="popup-info">
+        <div class="popup-row">
+          <span class="popup-label">Протяженность:</span>
+          <span class="popup-value">~5600 км</span>
+        </div>
+        <div class="popup-row">
+          <span class="popup-label">Маршрут:</span>
+          <span class="popup-value">Мурманск → Берингов пролив</span>
+        </div>
+        <div class="popup-row">
+          <span class="popup-label">Статус:</span>
+          <span class="popup-value" style="color: #4ade80">Действующий</span>
+        </div>
+        <div class="popup-row">
+          <span class="popup-label">Сезон навигации:</span>
+          <span class="popup-value">Июль - Ноябрь</span>
+        </div>
+      </div>
+    `);
+
+    // Добавляем ключевые точки СМП - основные порты
+    const nspPoints = [
+      { pos: [69.00, 33.08], name: '⚓ Мурманск', info: 'Начальная точка СМП, незамерзающий порт' },
+      { pos: [71.20, 58.00], name: '🌊 Карские Ворота', info: 'Пролив, вход в Карское море' },
+      { pos: [73.50, 70.00], name: '⚓ Диксон', info: 'Порт в Карском море' },
+      { pos: [77.00, 85.00], name: '📍 Северная трасса', info: 'Северный участок маршрута' },
+      { pos: [73.50, 141.00], name: '⚓ Тикси', info: 'Порт в море Лаптевых' },
+      { pos: [71.00, 170.00], name: '⚓ Певек', info: 'Самый северный город России' },
+    ];
+
+    nspPoints.forEach(point => {
+      const pointIcon = L.divIcon({
+        html: `<div class="nsp-point-marker">⚓</div>`,
+        className: 'nsp-point',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
+      });
+
+      const marker = L.marker(point.pos, { icon: pointIcon })
+        .bindPopup(`
+          <div class="popup-title">${point.name}</div>
+          <div class="popup-info">
+            <div class="popup-row">
+              <span class="popup-value">${point.info}</span>
+            </div>
+          </div>
+        `)
+        .addTo(nspGroup);
+    });
 
     // Морская навигационная карта OpenSeaMap
     const seaMapLayer = L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
@@ -162,7 +251,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
     
     seaMapLayerRef.current = seaMapLayer;
 
-    // Ограничиваем область карты только Арктикой (расширенные границы для большего перемещения)
+    // Ограничиваем область карты только Арктикой
     const arcticBounds = L.latLngBounds(
       L.latLng(60, -40),
       L.latLng(85, 220)
@@ -214,7 +303,6 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
 
     return () => {
       if (mapInstanceRef.current) {
-        mapInstanceRef.current.off('moveend zoomend', updateGraticule);
         mapInstanceRef.current.off('moveend zoomend', updateView);
         mapInstanceRef.current.remove();
         mapInstanceRef.current = null;
@@ -318,16 +406,13 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
         
         const color = colors[ship.type] || '#64748b';
         
-        // Генерируем траекторию (от прошлой позиции к текущей и к пункту назначения)
-        // Симулируем прошлые позиции
+        // Генерируем траекторию
         const prevLat = ship.lat - (Math.cos(ship.course * Math.PI / 180) * 1.5);
         const prevLon = ship.lon - (Math.sin(ship.course * Math.PI / 180) * 1.5);
-        
-        // Симулируем будущую позицию (приблизительно)
         const nextLat = ship.lat + (Math.cos(ship.course * Math.PI / 180) * 2);
         const nextLon = ship.lon + (Math.sin(ship.course * Math.PI / 180) * 2);
         
-        // Пройденный путь (пунктирная линия)
+        // Пройденный путь
         const pastRoute = L.polyline(
           [[prevLat, prevLon], [ship.lat, ship.lon]], 
           {
@@ -340,7 +425,7 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
         ).addTo(map);
         layersRef.current.push(pastRoute);
         
-        // Планируемый маршрут (сплошная линия)
+        // Планируемый маршрут
         const futureRoute = L.polyline(
           [[ship.lat, ship.lon], [nextLat, nextLon]], 
           {

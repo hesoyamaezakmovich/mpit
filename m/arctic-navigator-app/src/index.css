@@ -24,13 +24,6 @@ body, html {
 .leaflet-container {
   height: 100%;
   width: 100%;
-  background: #0a1628;
-}
-
-/* Контейнер карты Leaflet */
-.leaflet-container {
-  height: 100%;
-  width: 100%;
   background: #e0f2fe;
 }
 
@@ -53,6 +46,19 @@ body, html {
   display: flex;
   flex-direction: column;
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease-in-out;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 2000;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+.sidebar.open {
+  transform: translateX(0);
 }
 
 /* Заголовок приложения */
@@ -549,60 +555,6 @@ body, html {
 .ship-cargo { --ship-color: #10b981; }
 .ship-research { --ship-color: #f59e0b; }
 
-/* Адаптивность */
-@media (max-width: 1024px) {
-  .sidebar {
-    width: 320px;
-  }
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 2000;
-    height: 100vh;
-    transform: translateX(-100%);
-    transition: transform 0.3s;
-  }
-  
-  .sidebar.open {
-    transform: translateX(0);
-  }
-}
-
-/* Координаты курсора */
-.mouse-coords {
-  position: absolute;
-  bottom: 60px;
-  left: 20px;
-  background: rgba(15, 31, 58, 0.95);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 12px;
-  color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  z-index: 1000;
-  border: 1px solid rgba(59, 130, 246, 0.3);
-  backdrop-filter: blur(10px);
-  font-family: 'Courier New', monospace;
-  font-weight: 600;
-}
-
-/* Стили для меток сетки */
-.graticule-label {
-  background: none !important;
-  border: none !important;
-  box-shadow: none !important;
-  z-index: 9999 !important;
-}
-
-.graticule-label div {
-  z-index: 9999 !important;
-  position: relative !important;
-}
-
 /* Координаты курсора */
 .mouse-coords {
   position: absolute;
@@ -622,22 +574,43 @@ body, html {
   pointer-events: none;
 }
 
-
-/* Убираем надпись Leaflet */
-.leaflet-control-attribution {
-  display: none !important;
+/* Стили для координатной сетки */
+.graticule-label-container {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.leaflet-bottom.leaflet-right {
-  display: none !important;
+.graticule-label-fixed {
+  background: rgba(15, 31, 58, 0.9) !important;
+  color: #60a5fa !important;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  pointer-events: none;
+  font-family: 'Courier New', monospace;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
 }
 
-/* Или более точечно */
-a.leaflet-control-attribution-toggle,
-.leaflet-control-attribution.leaflet-control {
-  display: none !important;
+/* Северный Морской Путь */
+.nsp-route {
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
+.nsp-point-marker {
+  font-size: 22px;
+  filter: drop-shadow(0 2px 6px rgba(0, 160, 227, 0.8));
+  color: #00a0e3;
+}
+
+.nsp-point {
+  z-index: 1000 !important;
+}
 
 /* Кнопка гамбургер */
 .hamburger-button {
@@ -692,51 +665,26 @@ a.leaflet-control-attribution-toggle,
   transform: translateY(-8px) rotate(-45deg);
 }
 
-/* Боковая панель с анимацией */
-.sidebar {
-  width: 380px;
-  background: linear-gradient(180deg, #0f1f3a 0%, #0a1628 100%);
-  color: white;
-  padding: 0;
-  overflow: hidden;
-  height: 100vh;
-  border-right: 1px solid rgba(59, 130, 246, 0.1);
-  display: flex;
-  flex-direction: column;
-  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease-in-out;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 2000;
-}
-
-.sidebar.closed {
-  transform: translateX(-100%);
-}
-
-.sidebar.open {
-  transform: translateX(0);
-}
-
-/* Скрываем все элементы атрибуции */
-.leaflet-control-attribution {
-  display: none !important;
-}
-
-.leaflet-bottom.leaflet-right {
-  display: none !important;
-}
-
+/* Скрываем все элементы атрибуции Leaflet */
+.leaflet-control-attribution,
+.leaflet-bottom.leaflet-right,
 a.leaflet-control-attribution-toggle,
-.leaflet-control-attribution.leaflet-control {
-  display: none !important;
-}
-
-.leaflet-container .leaflet-control-attribution {
-  display: none !important;
-}
-
+.leaflet-control-attribution.leaflet-control,
+.leaflet-container .leaflet-control-attribution,
 .leaflet-container a[title="A JavaScript library for interactive maps"] {
   display: none !important;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    max-width: 380px;
+  }
 }
