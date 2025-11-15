@@ -46,7 +46,7 @@ const Sidebar = ({
       <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <div className="app-header">
           <h1 className="app-title">
-            🌨️ Arctic Navigator
+            OKAK-Navigation
           </h1>
           <div className="app-subtitle">
             Мониторинг ледовой обстановки в реальном времени
@@ -123,27 +123,35 @@ const Sidebar = ({
                   style={{ '--ship-color': shipColors[ship.type] }}
                   onClick={() => onShipClick(ship)}
                 >
-                  <div className="ship-name">{ship.name}</div>
+                  <div className="ship-name">
+                    <span>{ship.name}</span>
+                    <span 
+                      className="ship-type-badge"
+                      style={{ 
+                        background: shipColors[ship.type],
+                        color: 'white'
+                      }}
+                    >
+                      {shipLabels[ship.type]}
+                    </span>
+                  </div>
                   <div className="ship-details">
                     <div className="ship-detail">
-                      📍 {ship.lat.toFixed(2)}°N, {ship.lon.toFixed(2)}°E
+                      <span>📍</span>
+                      <span>{ship.lat.toFixed(2)}°N, {ship.lon.toFixed(2)}°E</span>
                     </div>
                     <div className="ship-detail">
-                      ⚡ {ship.speed} уз | 🧭 {ship.course}°
+                      <span>⚡</span>
+                      <span>{ship.speed} уз</span>
+                      <span>|</span>
+                      <span>🧭</span>
+                      <span>{ship.course}°</span>
                     </div>
                     <div className="ship-detail">
-                      🎯 {ship.destination}
+                      <span>🎯</span>
+                      <span>{ship.destination}</span>
                     </div>
                   </div>
-                  <span 
-                    className="ship-type-badge"
-                    style={{ 
-                      background: shipColors[ship.type],
-                      color: 'white'
-                    }}
-                  >
-                    {shipLabels[ship.type]}
-                  </span>
                 </div>
               ))}
             </div>

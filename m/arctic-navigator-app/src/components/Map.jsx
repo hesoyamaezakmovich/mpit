@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
+import 'leaflet-polylinedecorator';
 
 const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) => {
   const mapRef = useRef(null);
@@ -43,10 +44,19 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       if (zoom >= 7 && zoom < 10) interval = 2;
       if (zoom >= 10) interval = 1;
       
+      // Ограничиваем минимальный интервал, чтобы метки не были слишком частыми
+      const latRange = bounds.getNorth() - bounds.getSouth();
+      const lngRange = bounds.getEast() - bounds.getWest();
+      if (latRange < interval * 2) interval = Math.max(interval, latRange / 3);
+      if (lngRange < interval * 2) interval = Math.max(interval, lngRange / 3);
+      
       // Линии широты
       for (let lat = Math.floor(bounds.getSouth() / interval) * interval; 
            lat <= bounds.getNorth(); 
            lat += interval) {
+        // Пропускаем, если линия слишком близко к границе
+        if (lat < bounds.getSouth() || lat > bounds.getNorth()) continue;
+        
         L.polyline(
           [[lat, bounds.getWest()], [lat, bounds.getEast()]], 
           {
@@ -56,12 +66,45 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
             interactive: false
           }
         ).addTo(graticule);
+        
+        // Подпись широты (слева, немного внутри видимой области)
+        const westOffset = bounds.getWest() + Math.max(0.5, (bounds.getEast() - bounds.getWest()) * 0.03);
+        const latLabel = L.divIcon({
+          html: `<div style="
+            background: rgba(15, 31, 58, 0.98) !important;
+            color: #60a5fa !important;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            border: 2px solid rgba(59, 130, 246, 0.8) !important;
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+          ">${lat >= 0 ? lat.toFixed(1) + '°N' : Math.abs(lat).toFixed(1) + '°S'}</div>`,
+          className: 'graticule-label',
+          iconSize: [70, 26],
+          iconAnchor: [0, 13]
+        });
+        const latMarker = L.marker([lat, westOffset], { 
+          icon: latLabel,
+          interactive: false,
+          zIndexOffset: 2000,
+          pane: 'overlayPane'
+        });
+        latMarker.addTo(graticule);
       }
       
       // Линии долготы
       for (let lng = Math.floor(bounds.getWest() / interval) * interval; 
            lng <= bounds.getEast(); 
            lng += interval) {
+        // Пропускаем, если линия слишком близко к границе
+        if (lng < bounds.getWest() || lng > bounds.getEast()) continue;
+        
         L.polyline(
           [[bounds.getSouth(), lng], [bounds.getNorth(), lng]], 
           {
@@ -71,6 +114,36 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
             interactive: false
           }
         ).addTo(graticule);
+        
+        // Подпись долготы (внизу, немного внутри видимой области)
+        const southOffset = bounds.getSouth() + Math.max(0.2, (bounds.getNorth() - bounds.getSouth()) * 0.03);
+        const lngLabel = L.divIcon({
+          html: `<div style="
+            background: rgba(15, 31, 58, 0.98) !important;
+            color: #60a5fa !important;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+            border: 2px solid rgba(59, 130, 246, 0.8) !important;
+            pointer-events: none;
+            font-family: 'Courier New', monospace;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+          ">${lng >= 0 ? lng.toFixed(1) + '°E' : Math.abs(lng).toFixed(1) + '°W'}</div>`,
+          className: 'graticule-label',
+          iconSize: [70, 26],
+          iconAnchor: [35, 0]
+        });
+        const lngMarker = L.marker([southOffset, lng], { 
+          icon: lngLabel,
+          interactive: false,
+          zIndexOffset: 2000,
+          pane: 'overlayPane'
+        });
+        lngMarker.addTo(graticule);
       }
     };
     
@@ -89,13 +162,16 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
     
     seaMapLayerRef.current = seaMapLayer;
 
-    // Ограничиваем область карты только Арктикой
+    // Ограничиваем область карты только Арктикой (расширенные границы для большего перемещения)
     const arcticBounds = L.latLngBounds(
-      L.latLng(65, 40),
-      L.latLng(85, 180)
+      L.latLng(60, -40),
+      L.latLng(85, 220)
     );
     map.setMaxBounds(arcticBounds);
-    map.fitBounds(arcticBounds);
+    map.fitBounds(L.latLngBounds(
+      L.latLng(65, 40),
+      L.latLng(85, 180)
+    ));
 
     // Добавляем контроль зума в правый нижний угол
     L.control.zoom({

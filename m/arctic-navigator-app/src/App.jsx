@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import L from 'leaflet';
 import Map from './components/Map';
 import Sidebar from './components/Sidebar';
 
