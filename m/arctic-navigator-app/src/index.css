@@ -1,7 +1,11 @@
+@import './styles/modal-styles.css';
+@import './styles/ai-tools-styles.css';
+
 /* Импорт стилей Leaflet */
 @import 'leaflet/dist/leaflet.css';
 
-/* Сброс стилей */
+
+
 * {
   margin: 0;
   padding: 0;

@@ -13,7 +13,6 @@ function App() {
   const [routesLayer, setRoutesLayer] = useState(true);
   const mapInstanceRef = useRef(null);
 
-  // Загрузка данных при монтировании
   useEffect(() => {
     loadData();
   }, []);

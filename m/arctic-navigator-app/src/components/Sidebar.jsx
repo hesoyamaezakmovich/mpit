@@ -9,7 +9,9 @@ const Sidebar = ({
   onShipsLayerChange,
   onRoutesLayerChange,
   onRefresh,
-  onShipClick 
+  onShipClick,
+  onOpenRouteAnalysis,
+  onOpenIceDetection
 }) => {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -54,6 +56,36 @@ const Sidebar = ({
         </div>
         
         <div className="sidebar-content">
+          {/* AI Инструменты */}
+          <div className="panel">
+            <div className="panel-header">
+              🤖 AI Инструменты
+            </div>
+            <div className="ai-tools-grid">
+              <button 
+                onClick={onOpenRouteAnalysis}
+                className="ai-tool-button"
+              >
+                <span className="tool-icon">🧭</span>
+                <div className="tool-info">
+                  <div className="tool-name">Анализ маршрута</div>
+                  <div className="tool-desc">Оценка рисков пути</div>
+                </div>
+              </button>
+
+              <button 
+                onClick={onOpenIceDetection}
+                className="ai-tool-button"
+              >
+                <span className="tool-icon">🛰️</span>
+                <div className="tool-info">
+                  <div className="tool-name">Детекция льда</div>
+                  <div className="tool-desc">Анализ снимков</div>
+                </div>
+              </button>
+            </div>
+          </div>
+
           {/* Контроль слоёв */}
           <div className="panel">
             <div className="panel-header">
