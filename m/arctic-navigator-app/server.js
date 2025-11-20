@@ -12,7 +12,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -110,6 +113,8 @@ app.post('/api/route/calculate', async (req, res) => {
     res.status(500).json({ error: 'Ошибка расчёта маршрута' });
   }
 });
+
+
 
 // Получить метаинформацию о системе
 app.get('/api/status', async (req, res) => {
@@ -350,6 +355,84 @@ function calculateTime(start, end) {
   const hours = Math.round(distance / (averageSpeed * 1.852));
   return hours;
 }
+
+// загрузка файлов
+
+import multer from 'multer';
+const upload = multer({ dest: 'uploads/' });
+
+// Загрузка python скриптов
+
+import { PythonShell } from 'python-shell';
+
+// Общие настройки PythonShell
+const pythonOptions = {
+  mode: 'text',
+  pythonPath: './python_scripts/venv/Scripts/python.exe', // или 'python3' или путь к venv
+  scriptPath: './python_scripts'
+};
+
+app.post('/api/get-bbox', upload.single('geojsonFile'), (req, res) => {
+  console.log('📁 File received:', req.file);
+  console.log('🐍 Starting Python script...');
+  
+  const pyshell = new PythonShell('get_bbox.py', {
+    ...pythonOptions,
+    args: [req.file.path]
+  });
+
+  let output = '';
+
+  pyshell.on('message', function (message) {
+    console.log('🐍 Python:', message);
+    output = message; // сохраняем последнее сообщение
+  });
+
+  pyshell.end(function (err) {
+    if (err) {
+      console.error('❌ Python error:', err);
+      return res.status(500).json({ error: 'BBox script failed' });
+    }
+    
+    console.log('✅ Python finished');
+    res.json(JSON.parse(output));
+  });
+});
+
+app.post('/api/calculate-route', upload.fields([
+  { name: 'geojsonFile', maxCount: 1 },
+  { name: 'tiffFile', maxCount: 1 }
+]), (req, res) => {
+
+  const geojsonPath = req.files['geojsonFile'][0].path;
+  const tiffPath = req.files['tiffFile'][0].path;
+
+  console.log('📁 File received:', tiffPath);
+  console.log('🐍 Starting Python script...');
+  
+  const pyshell = new PythonShell('route_calculator.py', {
+    ...pythonOptions,
+    args: [geojsonPath, tiffPath]
+  });
+
+  let output = '';
+
+  pyshell.on('message', function (message) {
+    console.log('🐍 Python:', message);
+    output = message; // сохраняем последнее сообщение
+  });
+
+  pyshell.end(function (err) {
+    if (err) {
+      console.error('❌ Python error:', err);
+      return res.status(500).json({ error: 'Route calculation failed' });
+    }
+    
+    console.log('✅ Python finished');
+    res.json(JSON.parse(output));
+  });
+});
+
 
 // =====================================================
 // Запуск сервера

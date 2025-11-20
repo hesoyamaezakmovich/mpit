@@ -246,10 +246,10 @@ const Map = ({ iceData, ships, iceLayer, shipsLayer, routesLayer, onMapReady }) 
       L.latLng(85, 220)
     );
     map.setMaxBounds(arcticBounds);
-    map.fitBounds(L.latLngBounds(
-      L.latLng(65, 40),
-      L.latLng(85, 180)
-    ));
+    // map.fitBounds(L.latLngBounds(
+    //   L.latLng(65, 40),
+    //   L.latLng(85, 180)
+    // ));
 
     // Добавляем контроль зума в правый нижний угол
     L.control.zoom({

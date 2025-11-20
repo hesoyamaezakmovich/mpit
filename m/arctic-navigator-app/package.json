@@ -15,6 +15,8 @@
     "leaflet": "^1.9.4",
     "leaflet-graticule": "^0.0.1",
     "leaflet-polylinedecorator": "^1.6.0",
+    "multer": "^2.0.2",
+    "python-shell": "^5.0.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },

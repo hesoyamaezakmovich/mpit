@@ -16,9 +16,17 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 .idea
+.mypy_cache
 .DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+.venv
+
+# Virtual environment
+python_scripts/venv
+python_scripts/reserved
+uploads/* 
+!uploads/.gitkeep

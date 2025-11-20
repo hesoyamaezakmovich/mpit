@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 
-const Sidebar = ({ 
+const Sidebar = ({
+  onTiffUpload,
+  onCalculateRoute,
+  onUpload, 
   ships, 
   iceLayer, 
   shipsLayer,
@@ -131,6 +134,41 @@ const Sidebar = ({
         </div>
         
         <div className="sidebar-content">
+
+          {/* загрузка geojson */}
+           <div style={{marginBottom: '10px'}}>
+            <label className="btn-secondary" style={{display: 'block', textAlign: 'center'}}>
+              📁 Загрузить разметку льда
+              <input 
+                type="file" 
+                accept=".geojson"
+                onChange={(e) => onUpload(e)}  // ← ИЗМЕНИ ТУТ
+                style={{display: 'none'}}
+              />
+            </label>
+          </div>
+
+          <div style={{marginBottom: '10px'}}>
+            <label className="btn-secondary" style={{display: 'block', textAlign: 'center'}}>
+              🛰️ Загрузить спутниковый снимок (TIFF)
+              <input 
+                type="file" 
+                accept=".tif,.tiff"
+                onChange={(e) => onTiffUpload(e)}
+                style={{display: 'none'}}
+              />
+            </label>
+          </div>
+
+          <button 
+            className="btn-primary" 
+            onClick={onCalculateRoute}
+            style={{marginBottom: '10px', width: '100%'}}
+          >
+            🗺️ Построить маршрут
+          </button>
+
+
           {/* Кнопка аналитики */}
           <button 
             onClick={() => setShowAnalytics(!showAnalytics)}
