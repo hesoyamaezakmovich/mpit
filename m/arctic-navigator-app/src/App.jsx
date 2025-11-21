@@ -8,10 +8,18 @@ function App() {
   const [iceData, setIceData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [iceLayer, setIceLayer] = useState(true);
+  const [iceLayer, setIceLayer] = useState(null);
   const [shipsLayer, setShipsLayer] = useState(true);
   const [routesLayer, setRoutesLayer] = useState(true);
   const mapInstanceRef = useRef(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [bboxRect, setBboxRect] = useState(null);
+  const [routeLayer, setRouteLayer] = useState(null);
+  const [routeGeoJSON, setRouteGeoJSON] = useState(null);
+  const [savedFormData, setSavedFormData] = useState(null);
+  const rectRef = useRef(null);
+  const routeLayerRef = useRef(null);
+  const [tiffFile, setTiffFile] = useState(null);
 
   useEffect(() => {
     loadData();
@@ -61,43 +69,106 @@ function App() {
     }
   };
 
-  const handleMapReady = (map) => {
-    mapInstanceRef.current = map;
-  };
+const handleUpload = async (event) => {
+  const file = event.target.files[0];
+  
+  const formData = new FormData();
+  formData.append('geojsonFile', file);
+  setSavedFormData(formData);
 
-  if (loading) {
-    return (
-      <div className="loading">
-        <div className="loading-spinner"></div>
-        <div className="loading-text">Загрузка данных...</div>
-      </div>
-    );
-  }
+  const bboxResponse = await fetch('/api/get-bbox', {
+    method: 'POST',
+    body: formData
+  });
+  const { bbox } = await bboxResponse.json();
+  
+  // Просто сохраняем bbox, а отрисовку делаем в useEffect
+  setBboxRect(bbox);
+};
 
-  if (error) {
-    return (
-      <div className="loading">
-        <div style={{ textAlign: 'center' }}>
-          <p style={{ fontSize: '20px', color: '#ef4444' }}>❌ {error}</p>
-          <button 
-            onClick={loadData}
-            className="btn-primary"
-            style={{
-              marginTop: '20px',
-              width: 'auto',
-              padding: '10px 20px'
-            }}
-          >
-            🔄 Попробовать снова
-          </button>
-        </div>
-      </div>
-    );
+
+
+const handleTiffUpload = (event) => {
+  setTiffFile(event.target.files[0]);
+};
+
+const handleCalculateRoute = async () => {
+  if (!savedFormData || !tiffFile) {
+    console.log('❌ Нужно загрузить и GeoJSON и TIFF');
+    return;
   }
+  
+  const formData = new FormData();
+  formData.append('geojsonFile', savedFormData.get('geojsonFile'));
+  formData.append('tiffFile', tiffFile);
+  
+  const routeResponse = await fetch('/api/calculate-route', {
+    method: 'POST', 
+    body: formData
+  });
+  const routeGeoJSON = await routeResponse.json();
+  setRouteGeoJSON(routeGeoJSON);
+};
+
+
+
+
+useEffect(() => {
+  if (!mapInstanceRef.current) return;
+  
+  const map = mapInstanceRef.current;
+  
+  // Отрисовка/обновление прямоугольника
+  if (bboxRect) {
+    if (rectRef.current) {
+      map.removeLayer(rectRef.current);
+    }
+    const rect = L.rectangle([
+      [bboxRect[1], bboxRect[0]],
+      [bboxRect[3], bboxRect[2]]
+    ], {
+      color: '#3388ff',
+      weight: 2,
+      fillOpacity: 0.1
+    }).addTo(map);
+    rectRef.current = rect;
+    
+    // Центрируем на прямоугольнике с задержкой
+    setTimeout(() => {
+      if (map.getSize().x) { // проверяем что карта отрендерена
+        map.fitBounds(rect.getBounds());
+      }
+    }, 100);
+  }
+  
+  // Отрисовка/обновление маршрута
+  if (routeGeoJSON) {
+    if (routeLayerRef.current) {
+      map.removeLayer(routeLayerRef.current);
+    }
+    const newRouteLayer = L.geoJSON(routeGeoJSON, {
+      style: {
+        color: '#ff0000',
+        weight: 6,
+        opacity: 1
+      }
+    }).addTo(map);
+    routeLayerRef.current = newRouteLayer;
+  }
+  
+}, [bboxRect, routeGeoJSON]); // оба зависимости
+
+
+const handleMapReady = (map) => {
+  mapInstanceRef.current = map;
+};
 
   return (
     <div className="main-container">
       <Sidebar 
+        onTiffUpload={handleTiffUpload}
+        onCalculateRoute={handleCalculateRoute}
+        onUpload={handleUpload}
         ships={ships}
         iceLayer={iceLayer}
         shipsLayer={shipsLayer}
